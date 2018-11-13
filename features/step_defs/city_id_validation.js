@@ -4,10 +4,10 @@ const assert = require('assert');
 const request = require('request');
 const { Given, When, Then, After } = require('cucumber');
 
-const city_id = '524901';
+const api_key = 'a66e83ff8c1cac1ea15902f0ed3f5ff3';
 const api_uri = 'http://api.openweathermap.org/data/2.5/forecast';
 
-function get_api_uri(api_key) {
+function get_api_uri(city_id) {
 	var uri_array = [];
 	uri_array.push(api_uri);
 	uri_array.push('?');
@@ -20,9 +20,9 @@ function get_api_uri(api_key) {
 };
 
 
-When('Weather request with valid application id is sent', function (done) {
-	   const valid_api_key = 'a66e83ff8c1cac1ea15902f0ed3f5ff3';
-	   var target_uri = get_api_uri(valid_api_key);
+When('Weather request with valid city id is sent', function (done) {
+	   const valid_city_id = '524901';
+	   var target_uri = get_api_uri(valid_city_id);
 
 	   request.get(target_uri)
 	   	.on('response', (response) => {
@@ -36,26 +36,18 @@ When('Weather request with valid application id is sent', function (done) {
 		return 'fail';
 	 });
 
-When('Weather request with invalid application id is sent', function (done) {
-	   const invalid_api_key = '0';
-	   var target_uri = get_api_uri(invalid_api_key);
+When('Weather request with invalid city id is sent', function (done) {
+	   const invalid_city_id = '0';
+	   var target_uri = get_api_uri(invalid_city_id);
 
 	   request.get(target_uri)
-	   		  .on('response', (response) => {
-				this.response = response.statusCode;
-				done();
-			})
-			.on('error', ()=> {
-				return 'fail';
-			});
+	   	.on('response', (response) => {
+		    this.response = response.statusCode;
+			done();
+		})
+		.on('error', ()=> {
+			return 'fail';
+		});
 
 		return 'fail';
 	 });
-
-Then('{int} response code', function (int) {
-	   assert.equal(int, this.response);
-     });
-
-After( function () {
-	this.response = undefined;
-});
